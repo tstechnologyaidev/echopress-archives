@@ -23,8 +23,7 @@ async function loadConfig() {
   supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 }
 
-// Initialise config immediately
-loadConfig().catch(err => console.error('Config load error:', err));
+// Configuration will be loaded when the DOM is ready.
 
 let currentRole = null; // 'member' or 'owner'
 let currentCategory = 'Militaire';
@@ -100,10 +99,18 @@ if (window.location.pathname !== '/' && window.location.pathname !== '/index.htm
 
 // --- INITIALIZATION ---
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     initCanvas();
-    checkAuth();
-    setupEventListeners();
+    try {
+        await loadConfig();
+        checkAuth();
+        setupEventListeners();
+    } catch (err) {
+        console.error("Critical error: Could not load configuration. Ensure you are running the app via 'npm start' on localhost or Render.", err);
+        // Show an error message if the UI fails to load due to config
+        const pwError = document.getElementById('pw-error');
+        if (pwError) pwError.textContent = "Erreur Serveur: Lancez l'application avec 'npm start'.";
+    }
 });
 
 function setupEventListeners() {
