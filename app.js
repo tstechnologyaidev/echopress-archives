@@ -3,19 +3,28 @@
  * Main Application Logic
  */
 
-// Supabase Configuration
-const SUPABASE_URL = 'https://kisejhjfsemzbgqdrknw.supabase.co';
-// The anon key is used for public access. In a production app with sensitive data, 
-// row-level security (RLS) must be configured on the Supabase dashboard.
-const SUPABASE_KEY = 'sb_publishable_S9ijy5Hp5WNuO4iFJsm1fQ_aHgwWp5k';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// --- Load configuration from backend ---
+let SUPABASE_URL, SUPABASE_KEY, BUCKET_NAME, TABLE_NAME;
+let PASS_MEMBER, PASS_OWNER;
+let supabase; // will be initialised after config loads
 
-const BUCKET_NAME = 'archives';
-const TABLE_NAME = 'archive_images';
+async function loadConfig() {
+  const resp = await fetch('/config');
+  if (!resp.ok) throw new Error('Failed to load config');
+  const cfg = await resp.json();
 
-// Security & Access Control
-const PASS_MEMBER = 'EchoPressMember2026!!';
-const PASS_OWNER = 'EchoLight2026!!';
+  SUPABASE_URL   = cfg.SUPABASE_URL;
+  SUPABASE_KEY   = cfg.SUPABASE_ANON_KEY;
+  BUCKET_NAME    = cfg.BUCKET_NAME;
+  TABLE_NAME     = cfg.TABLE_NAME;
+  PASS_MEMBER    = cfg.PASS_MEMBER;
+  PASS_OWNER     = cfg.PASS_OWNER;
+
+  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
+
+// Initialise config immediately
+loadConfig().catch(err => console.error('Config load error:', err));
 
 let currentRole = null; // 'member' or 'owner'
 let currentCategory = 'Militaire';

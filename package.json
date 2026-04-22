@@ -1,5 +1,13 @@
 {
+  "name": "echopress-archives",
+  "version": "1.0.0",
+  "description": "EchoPress archives front-end with a tiny Express backend",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
-    "git": "^0.1.5"
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2"
   }
 }
